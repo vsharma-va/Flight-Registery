@@ -1,7 +1,8 @@
 import main
 import pandas as pd
-import os.path
 
+pd.set_option('display.width', 400)
+pd.set_option('display.max_columns', 13)
 
 class AvailableFlights:
 
@@ -23,7 +24,7 @@ class AvailableFlights:
         self.airlineName = airline
         self.airlineNumber = number
         self.choosenFlight = self.allFlights.loc[(self.allFlights.AIRLINE == self.airlineName) &
-                                            (self.allFlights.FLIGHT_NUMBER == self.airlineNumber)]
+                                            (self.allFlights.FLIGHT_NUMBER == self.airlineNumber)].reset_index()
         return self.choosenFlight
 
 
@@ -35,7 +36,7 @@ class Distance(AvailableFlights):
 
     def getDistance(self):
         y = self.choosenFlight
-        self.distance = y.loc[:,"DISTANCE"]
+        self.distance = y.at[0, 'DISTANCE']
         return self.distance
 
 class Payment(Distance):
@@ -46,7 +47,7 @@ class Payment(Distance):
 
     def calculateCost(self):
         cost = self.distance * 5
-        return cost
+        return 'The Cost of the ticket is {}'.format(cost)
 
     def transactionProcess(self):
         if self.paymentMethod == "PayTM":
@@ -70,11 +71,12 @@ class User(Payment):
             self.seatBooked = True
         else:
             self.seatBooked = False
-        return 'Seat Booked'
 
-    def setSeatNumber(self, flightClass, preference):
+    def setSeatNumber(self, preference):
+        flightName = self.choosenFlight.at[0, 'AIRLINE']
+        flightNumber = self.choosenFlight.at[0, 'FLIGHT_NUMBER']
 
-        path_to_requiredFrame = '{}{}.csv'.format(self.choosenFlight.at[0, 'AIRLINE'], self.choosenFlight.at[0, 'FLIGHT_NUMBER'])
+        path_to_requiredFrame = '{}{}.csv'.format(flightName, flightNumber)
         try:
             x = open(path_to_requiredFrame)
             frame = pd.read_csv(path_to_requiredFrame)
@@ -120,6 +122,7 @@ class User(Payment):
                         requiredFrame2.iloc[i] = self.firstName
                         requiredFrame2.to_csv(path_to_requiredFrame)
                         break
+
 
 
 
