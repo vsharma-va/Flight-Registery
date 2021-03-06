@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\AccountChecker.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\bank.csv">
           <value>
             <Attribute>

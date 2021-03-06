@@ -4,6 +4,8 @@ import pandas as pd
 pd.set_option('display.width', 400)
 pd.set_option('display.max_columns', 13)
 
+
+'''Available Flights is the parent class'''
 class AvailableFlights:
 
     def __init__(self, first, last, email, starting, destination, payment):
@@ -15,12 +17,12 @@ class AvailableFlights:
         self.paymentMethod = payment
         self.choosenFlight = None
 
-    def getAllFlights(self):
+    def getAllFlights(self):                                                #Gets all the flights which operate between the user defined airports
         self.allFlights = main.requiredDf.loc[(main.requiredDf.ORIGIN_AIRPORT == self.startingPoint) &
                                          (main.requiredDf.DESTINATION_AIRPORT == self.destination)]
         return self.allFlights
 
-    def chooseFlight(self, airline, number):
+    def chooseFlight(self, airline, number):                                #selects the flight which the user wants and returns it
         self.airlineName = airline
         self.airlineNumber = number
         self.choosenFlight = self.allFlights.loc[(self.allFlights.AIRLINE == self.airlineName) &
@@ -34,7 +36,7 @@ class Distance(AvailableFlights):
         super().__init__(first, last, email, starting, destination, payment)
         self.distance = None
 
-    def getDistance(self):
+    def getDistance(self):                                                     #simply gets the distance column for the chosen flight
         y = self.choosenFlight
         self.distance = y.at[0, 'DISTANCE']
         return self.distance
@@ -45,11 +47,11 @@ class Payment(Distance):
         super().__init__(first,  last, email, starting, destination, payment)
         self.transactionStatus = None
 
-    def calculateCost(self):
+    def calculateCost(self):                                                    #calculates the cost of the ticket based on the cost per km
         cost = self.distance * 5
         return cost
 
-    def transactionProcess(self):
+    def transactionProcess(self):                                               #Takes in pin/upiid and returns whichever is required
         if self.paymentMethod == "PayTM":
             number = int(input("Enter your UPI ID"))
             self.transactionStatus = True
@@ -77,19 +79,19 @@ class User(Payment):
         flightName = self.choosenFlight.at[0, 'AIRLINE']
         flightNumber = self.choosenFlight.at[0, 'FLIGHT_NUMBER']
 
-        path_to_requiredFrame = '{}{}.csv'.format(flightName, flightNumber)
-        try:
+        path_to_requiredFrame = '{}{}.csv'.format(flightName, flightNumber)             #naming convention for the csv file for each file is
+        try:                                                                            #AIRLINE_NAME + FLIGHT_NUMBER
             x = open(path_to_requiredFrame)
             frame = pd.read_csv(path_to_requiredFrame)
         except IOError:
-            frame = pd.DataFrame(None, [n for n in range(1, 24, 1)], ['A', 'B', 'C'])
-            frame.to_csv(path_to_requiredFrame, index = False)
+            frame = pd.DataFrame(None, [n for n in range(1, 24, 1)], ['A', 'B', 'C'])   #If it can't find the csv file it creates an empty database
+            frame.to_csv(path_to_requiredFrame, index = False)                          #and creates a csv file with the said convention
         requiredFrame = frame.loc[:, "A"]
 
-        if preference.lower() == "window":
-            allTaken = 0
-            for i in range(1, 24):
-                if pd.isnull(requiredFrame[i]):
+        if preference.lower() == "window":                                              #if preference is window then it checks if any of the A
+            allTaken = 0                                                                #seats are empty if not returns message that window seats
+            for i in range(1, 24):                                                      #are full
+                if pd.isnull(requiredFrame[i]):                                         #reminder add an else statement if all seats are full
                     requiredFrame[i] = self.firstName
                     frame.to_csv(path_to_requiredFrame, index = False)
                     break
@@ -108,21 +110,27 @@ class User(Payment):
         requiredFrame1 = frame.loc[:, "B"]
         requiredFrame2 = frame.loc[:, "C"]
 
-        if preference.lower() == 'aisle':
-            BFilled = False
-            for i in range(0, 24):
+        if preference.lower() == 'aisle':                                           #if preference is aisle seat then first the B seats are checked
+            BFilled = False                                                         #if they are full, then C seats are checked
+            for i in range(0, 24):                                                  #if c seats are full, then flight is completely booked is printed
                 if pd.isnull(requiredFrame1[i]):
                     requiredFrame1.iloc[i] = self.firstName
                     frame.to_csv(path_to_requiredFrame, index = False)
                     break
                 else:
                     BFilled = True
+            counter = 0
             if BFilled == True:
                 for i in range(0, 24):
                     if pd.isnull(requiredFrame2[i]):
                         requiredFrame2.iloc[i] = self.firstName
                         frame.to_csv(path_to_requiredFrame, index = False)
                         break
+                    else:
+                        counter += 1
+                if counter == 23:
+                    print("The flight is completely booked")
+
 
 
 

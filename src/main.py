@@ -6,7 +6,7 @@ import AccountChecker
 pd.set_option('display.width', 400)
 pd.set_option('display.max_columns', 13)
 
-data = pd.read_csv('../resources/flights.csv', nrows = 1000)
+data = pd.read_csv('../resources/flights.csv', nrows = 5000)
 df = pd.DataFrame(data)
 requiredDf = df.loc[:, ['YEAR', "DAY_OF_WEEK", "AIRLINE", "FLIGHT_NUMBER", "TAIL_NUMBER",
             "ORIGIN_AIRPORT", "DESTINATION_AIRPORT", "SCHEDULED_DEPARTURE",
