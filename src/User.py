@@ -47,18 +47,19 @@ class Payment(Distance):
 
     def calculateCost(self):
         cost = self.distance * 5
-        return 'The Cost of the ticket is {}'.format(cost)
+        return cost
 
     def transactionProcess(self):
         if self.paymentMethod == "PayTM":
             number = int(input("Enter your UPI ID"))
-            self.complete = True
+            self.transactionStatus = True
+            return number
         elif self.paymentMethod == "Bank":
             account = int(input("Enter your pin"))
             self.transactionStatus = True
+            return account
         else:
             self.transactionStatus = False
-        return "Complete"
 
 
 class User(Payment):
@@ -120,7 +121,7 @@ class User(Payment):
                 for i in range(0, 24):
                     if pd.isnull(requiredFrame2[i]):
                         requiredFrame2.iloc[i] = self.firstName
-                        requiredFrame2.to_csv(path_to_requiredFrame)
+                        frame.to_csv(path_to_requiredFrame, index = False)
                         break
 
 
