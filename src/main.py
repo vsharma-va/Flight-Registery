@@ -5,16 +5,29 @@ import AccountChecker
 
 # Run The user.py file only
 
+# Pandas options to display more columns and rows
 pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
+# The data contains more than 20000 rows
+# therefore i have limited it to 7000 rows
+# if you want more rows you can change the nrows to a bigger number
 data = pd.read_csv('../resources/flights.csv', nrows=7000)
 df = pd.DataFrame(data)
 requiredDf = df.loc[:, ['YEAR', "DAY_OF_WEEK", "AIRLINE", "FLIGHT_NUMBER", "TAIL_NUMBER",
                         "ORIGIN_AIRPORT", "DESTINATION_AIRPORT", "SCHEDULED_DEPARTURE",
                         "AIR_TIME", "DISTANCE", "SCHEDULED_ARRIVAL"]]
 
+
+'''correct variable is used in the while loop to check whether to ask the user for their details again or
+not. Correct variables bool value comes from inputValidationFunctions.py
+
+displayMoreFlights is a sentinel variable. It is used in the while loop to stop displaying more rows
+from the database. As the database is fairly large the rows are displayed in chunks of 100
+
+maxRowsToDisplay is used to control the maximum amount of rows displayed at once
+displayRowsFrom is used as a start point. The rows are displayed from displayRowsFrom to maxRowsToDisplay'''
 
 def main():
     correct = False
