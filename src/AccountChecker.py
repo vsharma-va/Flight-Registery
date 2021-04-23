@@ -1,46 +1,40 @@
 import pandas as pd
 
-'''Imports the bank.csv file and returns it as a dataframe.'''
+bankData = pd.read_csv("../resources/bank.csv")
+paytmData = pd.read_csv("../resources/paytm.csv")
 
-
-def openBankCSV():
-    file = pd.read_csv('../resources/bank.csv')
-    df = pd.DataFrame(file)
-    return df
-
-
-'''Imports the paytm.csv file and returns it as a dataframe'''
-
-
-def openPayCSV():
-    file = pd.read_csv('../resources/paytm.csv')
-    df = pd.DataFrame(file)
-    return df
-
-
-'''It takes pin and cost as parameters which are given in the main.py file 
-In main.py the user enters the pin and the cost is taken from the Payment class in User.py'''
+bankDf = pd.DataFrame(bankData)
+paytmDf = pd.DataFrame(paytmData)
 
 
 def deductBalanceBank(pin, cost, name):
-    df = openBankCSV()
-    requiredColumn = df.loc[df.PIN == pin]
-    balance = requiredColumn.at[0, 'Balance']
-    finalAmount = balance - cost
-    requiredColumn.at[0, 'Balance'] = finalAmount
-    df.to_csv('../resources/bank.csv')
-    return finalAmount
-
-
-'''If the user enters payment method as paytm then the user will have to enter the upiid instead of pin number
-The upiid of every person is in the paytm.csv file'''
+    requiredDf = bankDf.loc[bankDf.Name == name]
+    indexNumber = requiredDf.index.values[0]
+    password = requiredDf.at[indexNumber, 'PIN']
+    if password == pin:
+        balance = requiredDf.at[indexNumber, 'Balance']
+        if balance < cost:
+            print("Not enought Balance")
+        else:
+            finalBalance = balance - cost
+            file = open("../resources/bank.csv", 'w+')
+            file.close()
+            bankDf.at[indexNumber, 'Balance'] = finalBalance
+            bankDf.to_csv("../resources/bank.csv")
 
 
 def deductBalancePayTM(UpiID, cost, name):
-    df = openPayCSV()
-    requiredColumn = df.loc[df.UPI_ID == UpiID]
-    balance = requiredColumn.at[0, 'Balance']
-    finalAmount = balance - cost
-    requiredColumn.at[0, 'Balance'] = finalAmount
-    df.to_csv('../resources/paytm.csv')
-    return finalAmount
+    requiredDf = paytmDf.loc[paytmDf.Name == name]
+    indexNumber = requiredDf.index.values[0]
+    password = requiredDf.at[indexNumber, 'upiid']
+    if password == UpiID:
+        balance = requiredDf.at[indexNumber, 'Balance']
+        if balance < cost:
+            print("Not enough balance")
+        else:
+            finalBalance = balance - cost
+            file = open("../resources/paytm.csv", 'w+')
+            file.close()
+            paytmDf.at[indexNumber, 'Balance'] = finalBalance
+            paytmDf.to_csv("../resources/paytm.csv")
+    
